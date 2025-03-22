@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 18
           registry-url: "https://registry.npmjs.org/"
-          scope: "@nstech"
+          scope: "@beta"
 
       - name: 📦 Instalar dependências
         run: npm install
