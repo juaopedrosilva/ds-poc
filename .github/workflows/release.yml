@@ -26,11 +26,11 @@ jobs:
 
       - name: 🔨 Build do pacote
         run: npm run build
-        working-directory: packages/components  # Aponta para o design system
+        working-directory: packages/ui  # Aponta para o design system
 
       - name: 🚀 Publicar no NPM
         run: npm publish --access public
-        working-directory: packages/components
+        working-directory: packages/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -38,7 +38,7 @@ jobs:
         uses: TriPSs/conventional-changelog-action@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          version-file: "packages/components/package.json"
+          version-file: "packages/ui/package.json"
           output-file: "CHANGELOG.md"
           release-count: 1
 
