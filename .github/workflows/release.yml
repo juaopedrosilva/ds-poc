@@ -23,25 +23,27 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
           scope: "@jpss"
 
-      # Etapa 3: Instalar dependências
-      - name: 📦 Instalar dependências
-        run: |
-          pnpm install
-          pnpm recursive install  # Para garantir que as dependências do monorepo sejam instaladas corretamente
+      # Etapa 3: Instalar pnpm
+      - name: 📦 Instalar pnpm
+        run: npm install -g pnpm
 
-      # Etapa 4: Build do pacote
+      # Etapa 4: Instalar dependências
+      - name: 📦 Instalar dependências
+        run: pnpm install
+
+      # Etapa 5: Build do pacote
       - name: 🔨 Build do pacote
         run: |
           pnpm run build --filter @repo/ui  # Construa o pacote específico do design system
         working-directory: packages/ui
 
-      # Etapa 5: Adicionar e Versionar o pacote
+      # Etapa 6: Adicionar e Versionar o pacote
       - name: 🔖 Adicionar e versionar pacote
         run: |
           pnpm run publish-packages  # Comando para rodar o build, lint, testes, versionamento e publicação
         working-directory: .  # Diretório raiz do monorepo
 
-      # Etapa 6: Publicar no NPM
+      # Etapa 7: Publicar no NPM
       - name: 🚀 Publicar no NPM
         run: |
           pnpm publish --access public --filter @repo/ui  # Publicar o pacote no NPM
@@ -49,7 +51,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Etapa 7: Gerar Changelog
+      # Etapa 8: Gerar Changelog
       - name: 📝 Gerar Changelog
         uses: TriPSs/conventional-changelog-action@v5
         with:
@@ -58,7 +60,7 @@ jobs:
           output-file: "CHANGELOG.md"
           release-count: 1
 
-      # Etapa 8: Commit do Changelog
+      # Etapa 9: Commit do Changelog
       - name: 📤 Commit do Changelog
         run: |
           git config --global user.name "github-actions"
