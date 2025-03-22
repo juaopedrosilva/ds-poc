@@ -3,7 +3,7 @@ name: Release Design System
 on:
   push:
     branches:
-      - main  # Rodará apenas na branch master
+      - main  # Rodará apenas na branch main
 
 jobs:
   release:
@@ -11,29 +11,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Etapa 1: Checkout do código
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
 
+      # Etapa 2: Configurar Node.js
       - name: 📦 Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           registry-url: "https://registry.npmjs.org/"
-          scope: "@beta"
+          scope: "@jpss"
 
+      # Etapa 3: Instalar dependências
       - name: 📦 Instalar dependências
-        run: npm install
+        run: |
+          pnpm install
+          pnpm recursive install  # Para garantir que as dependências do monorepo sejam instaladas corretamente
 
+      # Etapa 4: Build do pacote
       - name: 🔨 Build do pacote
-        run: npm run build
-        working-directory: packages/ui  # Aponta para o design system
+        run: |
+          pnpm run build --filter @repo/ui  # Construa o pacote específico do design system
+        working-directory: packages/ui
 
+      # Etapa 5: Adicionar e Versionar o pacote
+      - name: 🔖 Adicionar e versionar pacote
+        run: |
+          pnpm run publish-packages  # Comando para rodar o build, lint, testes, versionamento e publicação
+        working-directory: .  # Diretório raiz do monorepo
+
+      # Etapa 6: Publicar no NPM
       - name: 🚀 Publicar no NPM
-        run: npm publish --access public
+        run: |
+          pnpm publish --access public --filter @repo/ui  # Publicar o pacote no NPM
         working-directory: packages/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Etapa 7: Gerar Changelog
       - name: 📝 Gerar Changelog
         uses: TriPSs/conventional-changelog-action@v5
         with:
@@ -42,6 +58,7 @@ jobs:
           output-file: "CHANGELOG.md"
           release-count: 1
 
+      # Etapa 8: Commit do Changelog
       - name: 📤 Commit do Changelog
         run: |
           git config --global user.name "github-actions"
