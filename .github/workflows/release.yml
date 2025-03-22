@@ -51,20 +51,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Etapa 8: Gerar Changelog
-      - name: 📝 Gerar Changelog
-        uses: TriPSs/conventional-changelog-action@v5
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          version-file: "packages/ui/package.json"
-          output-file: "CHANGELOG.md"
-          release-count: 1
-
-      # Etapa 9: Commit do Changelog
-      - name: 📤 Commit do Changelog
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add CHANGELOG.md
-          git commit -m "📜 Atualiza Changelog"
-          git push
+     
