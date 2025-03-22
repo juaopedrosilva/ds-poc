@@ -1,0 +1,51 @@
+name: Release Design System
+
+on:
+  push:
+    branches:
+      - main  # Rodará apenas na branch master
+
+jobs:
+  release:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 📦 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@nstech"
+
+      - name: 📦 Instalar dependências
+        run: npm install
+
+      - name: 🔨 Build do pacote
+        run: npm run build
+        working-directory: packages/components  # Aponta para o design system
+
+      - name: 🚀 Publicar no NPM
+        run: npm publish --access public
+        working-directory: packages/components
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 📝 Gerar Changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-file: "packages/components/package.json"
+          output-file: "CHANGELOG.md"
+          release-count: 1
+
+      - name: 📤 Commit do Changelog
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add CHANGELOG.md
+          git commit -m "📜 Atualiza Changelog"
+          git push
