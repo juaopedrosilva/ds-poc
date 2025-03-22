@@ -34,7 +34,7 @@ jobs:
       # Etapa 5: Build do pacote
       - name: 🔨 Build do pacote
         run: |
-          pnpm run build --filter @repo/ui  # Construa o pacote específico do design system
+          pnpm run build --filter @jp-poc/ui  # Construa o pacote específico do design system
         working-directory: packages/ui
 
       # Etapa 6: Adicionar e Versionar o pacote
@@ -46,7 +46,7 @@ jobs:
       # Etapa 7: Publicar no NPM
       - name: 🚀 Publicar no NPM
         run: |
-          pnpm publish --access public --filter @repo/ui  # Publicar o pacote no NPM
+          pnpm publish --access public --filter @jp-poc/ui  # Publicar o pacote no NPM
         working-directory: packages/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
